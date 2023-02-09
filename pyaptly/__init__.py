@@ -1799,7 +1799,13 @@ def cmd_mirror_create(cfg, mirror_name, mirror_config):
     aptly_cmd.append(mirror_name)
     aptly_cmd.append(mirror_config['archive'])
     aptly_cmd.append(mirror_config['distribution'])
-    aptly_cmd.extend(unit_or_list_to_list(mirror_config['components']))
+    ### Allow none defined components for flat repository
+        if 'components' in mirror_config:
+            components = mirror_config['components']
+        if components:
+            aptly_cmd.extend(unit_or_list_to_list(components))
+    else:
+        pass
 
     lg.debug('Running command: %s', ' '.join(aptly_cmd))
     subprocess.check_call(aptly_cmd)
